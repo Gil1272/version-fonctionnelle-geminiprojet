@@ -15,6 +15,7 @@ class AdminMiddleware
         }
 
         Log::info('Accès refusé pour l’utilisateur : ' . Auth::user()->id);
+        abort(403, 'Accès non autorisé');
         return redirect('/')->with('error', 'Accès réservé aux administrateurs.');
     }
 }

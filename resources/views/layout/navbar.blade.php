@@ -48,7 +48,7 @@
                                     <h5 class="mb-0 font-weight-normal">{{ $user->name }}</h5>
                                     <span>Admin</span>
                                 </div>
-                            @elseif (session('role') == 'employe')
+                            @else
                                 {{-- Afficher les informations de l'employé --}}
                                 <div class="profile-name">
                                     <h5 class="mb-0 font-weight-normal">{{ session('employe')->nom }}

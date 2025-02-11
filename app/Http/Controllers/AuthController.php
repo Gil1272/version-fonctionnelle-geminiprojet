@@ -47,7 +47,24 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Déconnexion réussie'], 200);
+        // Détermine quel guard est actuellement utilisé
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+            session()->forget('role');
+        }
+
+        if (Auth::guard('employe')->check()) {
+            Auth::guard('employe')->logout();
+            session()->forget('employe');
+        }
+
+        // Invalide la session
+        $request->session()->invalidate();
+
+        // Régénère le token CSRF
+        $request->session()->regenerateToken();
+
+        // Redirige vers la page de login
+        return redirect()->route('login');
     }
 }

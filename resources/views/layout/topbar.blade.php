@@ -97,7 +97,7 @@
                                <p class="mb-0 d-none d-sm-block navbar-profile-name">
                                    @if (session('role') == 'admin')
                                        {{ $user->name }}
-                                   @elseif (session('role') == 'employe')
+                                   @else
                                        {{ session('employe')->nom }} {{ session('employe')->prenom }}
                                    @endif
                                </p>
@@ -107,7 +107,7 @@
                    </a>
                    <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list"
                        aria-labelledby="profileDropdown">
-                       <h6 class="p-3 mb-0">Profile</h6>
+                       <h6 class="p-3 mb-0">Profil</h6>
                        <div class="dropdown-divider"></div>
                        <a class="dropdown-item preview-item">
                            <div class="preview-thumbnail">
@@ -116,7 +116,7 @@
                                </div>
                            </div>
                            <div class="preview-item-content">
-                               <p class="preview-subject mb-1">Settings</p>
+                               <p class="preview-subject mb-1">Paramètres</p>
                            </div>
                        </a>
                        <div class="dropdown-divider"></div>
@@ -126,9 +126,13 @@
                                    <i class="mdi mdi-logout text-danger"></i>
                                </div>
                            </div>
-                           <div class="preview-item-content">
-                               <p class="preview-subject mb-1">Log out</p>
-                           </div>
+                           <form method="POST" action="{{ route('logout') }}" class="preview-item-content">
+                               @csrf
+                               <button type="submit" class="preview-subject mb-1"
+                                   style="background: none; border: none; padding: 0; cursor: pointer;">
+                                   Se Déconnecter
+                               </button>
+                           </form>
                        </a>
                        <div class="dropdown-divider"></div>
                        <p class="p-3 mb-0 text-center">Advanced settings</p>
