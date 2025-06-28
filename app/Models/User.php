@@ -47,4 +47,9 @@ class User extends Authenticatable
         return $this->role === 'admin'; // Ou la logique appropriée
     }
 
+    public function commentaires()
+{
+    return $this->morphMany(Commentaire::class, 'commentable');
+}
+
 }

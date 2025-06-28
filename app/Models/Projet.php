@@ -21,4 +21,10 @@ class Projet extends Model
     {
         return $this->hasMany(Tache::class);
     }
+
+public function commentaires()
+{
+    return $this->hasMany(Commentaire::class)->latest();
+}
+
 }

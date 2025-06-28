@@ -162,6 +162,36 @@
                                 </div>
                             @endif
                         </div>
+
+
+                        <!-- Commentaires -->
+                        <div class="mt-4">
+                            <h6 class="border-bottom pb-2">Commentaires</h6>
+
+                            <!-- Liste des commentaires -->
+                            @foreach ($projet->commentaires as $commentaire)
+                                <div class="mb-2 p-2 border rounded">
+                                    <strong>{{ $commentaire->commentable->nom ?? 'Anonyme' }}</strong>
+                                    <p class="mb-1">{{ $commentaire->contenu }}</p>
+                                    <small class="text-muted">{{ $commentaire->created_at->diffForHumans() }}</small>
+                                </div>
+                            @endforeach
+
+
+                            <!-- Formulaire pour ajouter un commentaire -->
+                            <form action="{{ route('commentaires.store', $projet->id) }}" method="POST" class="mt-3">
+                                @csrf
+                                <div class="mb-2">
+                                    <label for="contenu{{ $projet->id }}" class="form-label">Ajouter un
+                                        commentaire</label>
+                                    <textarea name="contenu" id="contenu{{ $projet->id }}" rows="2" class="form-control" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="mdi mdi-message-plus"></i> Publier
+                                </button>
+                            </form>
+                        </div>
+
                     </div>
 
                     <div class="modal-footer">

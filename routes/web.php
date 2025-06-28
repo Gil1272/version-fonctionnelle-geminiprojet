@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TacheController;
+use App\Http\Controllers\CommentaireController;
 use Illuminate\Support\Facades\Route;
 
 // Redirection de la racine vers login
@@ -27,6 +28,16 @@ Route::middleware(['auth:web,employe'])->group(function () {
     Route::get('/projets', [ProjectController::class, 'index'])->name('projets.index');
     Route::get('/taches', [TacheController::class, 'index'])->name('taches.index');
 
+     // Routes pour les tâches
+     Route::prefix('taches')->group(function () {
+        Route::get('/create', [TacheController::class, 'create'])->name('taches.create');
+        Route::post('/create', [TacheController::class, 'store'])->name('taches.store');
+        Route::get('/edit/{employe}', [TacheController::class, 'edit'])->name('taches.edit');
+    });
+
+    Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');
+
+
     // Routes protégées pour les administrateurs
     Route::middleware('admin')->group(function () {
         // Routes pour les projets
@@ -34,6 +45,7 @@ Route::middleware(['auth:web,employe'])->group(function () {
             Route::get('/create', [ProjectController::class, 'create'])->name('projets.create');
             Route::post('/create', [ProjectController::class, 'store'])->name('projets.store');
             Route::get('/edit/{projet}', [ProjectController::class, 'edit'])->name('projets.edit');
+            Route::put('/edit/{projet}', [ProjectController::class, 'update'])->name('projets.edit');
             Route::delete('/delete/{projet}', [ProjectController::class, 'destroy'])->name('projets.destroy');
         });
 
@@ -47,11 +59,6 @@ Route::middleware(['auth:web,employe'])->group(function () {
             Route::delete('/delete/{employe}', [EmployeController::class, 'destroy'])->name('employes.destroy');
         });
 
-        // Routes pour les tâches
-        Route::prefix('taches')->group(function () {
-            Route::get('/create', [TacheController::class, 'create'])->name('taches.create');
-            Route::post('/create', [TacheController::class, 'store'])->name('taches.store');
-            Route::get('/edit/{employe}', [TacheController::class, 'edit'])->name('taches.edit');
-        });
+
     });
 });

@@ -21,4 +21,12 @@ class Employe extends Authenticatable
         'photo',
         'adresse',
     ];
+
+    public function commentaires()
+{
+    return $this->morphMany(Commentaire::class, 'commentable');
 }
+
+}
+
+

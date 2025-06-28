@@ -16,7 +16,7 @@
     <div class="main-panel">
         <div class="content-wrapper">
             <div class="page-header">
-                <h3 class="page-title"> Mes employés </h3>
+                <h3 class="page-title"> Employés </h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Mes Employés</a></li>
@@ -59,15 +59,46 @@
                                                     class="btn btn-warning btn-sm">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </a>
-                                                <form action="{{ route('employes.destroy', $employe->id) }}" method="POST"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')">
-                                                        <i class="mdi mdi-delete"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Bouton pour ouvrir le modal de confirmation -->
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#confirmDeleteModal{{ $employe->id }}">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
+                                                <!-- Modal de confirmation -->
+                                                <div class="modal fade" id="confirmDeleteModal{{ $employe->id }}"
+                                                    tabindex="-1"
+                                                    aria-labelledby="confirmDeleteLabel{{ $employe->id }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-danger text-white">
+                                                                <h5 class="modal-title"
+                                                                    id="confirmDeleteLabel{{ $employe->id }}">
+                                                                    Confirmer la suppression
+                                                                </h5>
+                                                                <button type="button" class="btn-close btn-close-white"
+                                                                    data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Voulez-vous vraiment supprimer cet employé&nbsp;:
+                                                                <strong>{{ $employe->nom }} {{ $employe->prenom }}</strong>
+                                                                &nbsp;?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Annuler</button>
+                                                                <form action="{{ route('employes.destroy', $employe->id) }}"
+                                                                    method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-danger">
+                                                                        Supprimer
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
