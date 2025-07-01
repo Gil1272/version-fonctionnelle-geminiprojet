@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Connexion - Geminy Management System</title>
+    <title>Connexion - Gemini Management System</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}">
@@ -23,6 +23,19 @@
                 <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
                     <div class="card col-lg-4 mx-auto">
                         <div class="card-body px-5 py-5">
+
+                            <!-- Logo -->
+                            <div class="text-center mb-4">
+                                <img src="{{ asset('assets/images/logo.png') }}" alt="Gemini & Co Logo"
+                                    style="width: 120px;">
+                            </div>
+
+                            <!-- Mini pitch -->
+                            <h4 class="text-center mb-2">Bienvenue sur <strong>GEMINI &amp; CO</strong></h4>
+                            <p class="text-center text-muted mb-4">
+                                Gestion simplifiée des employés et projets digitaux de votre entreprise.
+                            </p>
+
                             <h3 class="card-title text-start mb-3">Connexion</h3>
 
                             <!-- Affichage des erreurs de validation -->
@@ -37,7 +50,7 @@
                             @endif
 
                             <form action="{{ route('login') }}" method="POST">
-                                @csrf <!-- Protection CSRF -->
+                                @csrf
                                 <div class="form-group">
                                     <label for="email">Adresse e-mail *</label>
                                     <input type="email" name="email" id="email" class="form-control p_input"
@@ -53,14 +66,19 @@
                                         <input type="checkbox" name="remember" id="remember" class="form-check-input">
                                         <label class="form-check-label" for="remember">Se souvenir de moi</label>
                                     </div>
-                                    <a href="#" class="forgot-pass">Mot de passe oublié
-                                        ?</a>
+                                    <a href="#" class="forgot-pass">Mot de passe oublié ?</a>
                                 </div>
                                 <div class="text-center d-grid gap-2">
                                     <button type="submit" class="btn btn-primary btn-block enter-btn">Se
                                         connecter</button>
                                 </div>
                             </form>
+
+                            <p class="text-center mt-3 text-muted">
+                                Besoin d’aide ? Contactez le support à
+                                <a href="mailto:support@gemini.com">support@gemini.com</a>
+                            </p>
+
                         </div>
                     </div>
                 </div>

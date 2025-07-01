@@ -9,7 +9,7 @@
                 <title>Logo GEMINI CO</title>
                 <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
                     font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="48" fill="#FFFFFF">
-                    GEMINI CO
+                    GEMINI & CO
                 </text>
             </svg>
         </a>
