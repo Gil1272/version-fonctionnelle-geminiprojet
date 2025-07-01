@@ -1,8 +1,9 @@
 <!-- partial:partials/_sidebar.html -->
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-        <a class="sidebar-brand brand-logo" href="index.html"><img src="{{ asset('assets/images/text-logo.png') }}"
-                alt="logo" /></a>
+        <a class="sidebar-brand brand-logo"
+            href="https://www.goafricaonline.com/bj/843293-gemini-company-informatique-cotonou-benin" target="_blank"><img
+                src="{{ asset('assets/images/text-logo.png') }}" alt="logo" /></a>
         <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="{{ asset('assets/images/logo.png') }}"
                 alt="logo" /></a>
     </div>
@@ -62,8 +63,10 @@
                 @endif
 
 
-                <a href="#" id="profile-dropdown" data-bs-toggle="dropdown"><i
-                        class="mdi mdi-dots-vertical"></i></a>
+                <a href="#" id="profile-dropdown" data-bs-toggle="dropdown" title="Ouvrir le menu profil"
+                    aria-label="Ouvrir le menu profil">
+                    <i class="mdi mdi-dots-vertical"></i>
+                </a>
                 <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list"
                     aria-labelledby="profile-dropdown">
                     <a href="#" class="dropdown-item preview-item">

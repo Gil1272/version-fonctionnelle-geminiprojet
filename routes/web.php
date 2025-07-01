@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TacheController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentaireController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +38,13 @@ Route::middleware(['auth:web,employe'])->group(function () {
 
     Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');
 
-
+    Route::get('/profile/edit', function () {
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
+    })->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/delete', [ProfileController::class, 'destroy'])->name('profile.delete');
+    Route::put('/profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.change-password');
     // Routes protégées pour les administrateurs
     Route::middleware('admin')->group(function () {
         // Routes pour les projets

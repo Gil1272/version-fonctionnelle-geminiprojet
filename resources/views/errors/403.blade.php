@@ -7,8 +7,10 @@
         <!--<div>Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>-->
         <div id="httpresponse">
             <h1>403</h1>
-            <h2>Access denied</h2>
+            <h2>Accès refusé</h2>
+            <p> Désolé, vous n'avez pas les droits nécessaires pour accéder à cette page.</p>
         </div>
+
         <svg id="policeman" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610.53 718.27">
             <defs>
                 <style>
@@ -140,7 +142,8 @@
             /* légère lueur */
         }
 
-        h2 {
+        h2,
+        p {
             font-size: 2rem;
             color: #cccccc;
             /* Gris clair */

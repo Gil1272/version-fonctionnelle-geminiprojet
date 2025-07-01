@@ -1,142 +1,161 @@
-<!-- partial:partials/_navbar.html -->
-<nav class="navbar p-0 fixed-top d-flex flex-row">
-    <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo-mini" href="index.html">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="logo" />
-        </a>
-    </div>
-    <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-            <span class="mdi mdi-menu"></span>
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+    <div class="container-fluid">
+
+        <!-- Burger toggle -->
+        <button class="navbar-toggler border-0" type="button" aria-label="Toggle navigation" id="burgerToggle">
+            <span class="mdi mdi-menu mdi-24px text-primary"></span>
         </button>
 
-        <ul class="navbar-nav navbar-nav-right">
+        <!-- Menu principal -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav ms-auto align-items-center">
 
-            <!-- Paramètres -->
-            <li class="nav-item nav-settings d-none d-lg-block">
-                <a class="nav-link" href="#">
-                    <i class="mdi mdi-view-grid"></i>
-                </a>
-            </li>
-
-            <!-- Notifications -->
-            <li class="nav-item dropdown border-left">
-                <a class="nav-link count-indicator dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="mdi mdi-bell"></i>
-                    <span class="count bg-danger"></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                    <li class="dropdown-header p-3">Notifications</li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item preview-item" href="#">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-calendar text-success"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Event today</p>
-                            <p class="text-muted ellipsis mb-0">Just a reminder that you have an event today</p>
-                        </div>
-                    </a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item preview-item" href="#">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-cog text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Settings</p>
-                            <p class="text-muted ellipsis mb-0">Update dashboard</p>
-                        </div>
-                    </a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item preview-item" href="#">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-link-variant text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Launch Admin</p>
-                            <p class="text-muted ellipsis mb-0">New admin wow!</p>
-                        </div>
-                    </a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li class="dropdown-footer text-center p-2"><a href="#">See all notifications</a></li>
-                </ul>
-            </li>
-
-            <!-- Profil utilisateur -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    @if (Auth::guard('web')->check() || Auth::guard('employe')->check())
+                <!-- Profil utilisateur simplifié -->
+                <li class="nav-item dropdown" style="position: relative;">
+                    <a class="nav-link d-flex align-items-center" href="#" id="profileDropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false" aria-label="Profil utilisateur">
                         @php
-                            $user = Auth::guard('web')->check() ? Auth::guard('web')->user() : Auth::guard('employe')->user();
+                            $user = Auth::guard('web')->check()
+                                ? Auth::guard('web')->user()
+                                : Auth::guard('employe')->user();
                             $isAdmin = session('role') === 'admin';
                         @endphp
-                        <div class="navbar-profile d-flex align-items-center">
-                            @if ($isAdmin)
-                                <div class="avatar-wrapper me-2">
-                                    <div class="avatar bg-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;">
-                                        <span class="text-white fw-bold">
-                                            {{ Str::upper(Str::substr($user->name, 0, 1)) }}
-                                            {{ Str::upper(Str::substr($user->name, strpos($user->name, ' ') + 1, 1)) }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @else
-                                <img class="img-xs rounded-circle me-2" src="{{ asset('storage/' . (session('employe')->photo ?? 'default.png')) }}" alt="">
-                            @endif
-                            <span class="navbar-profile-name d-none d-sm-inline">
-                                {{ $isAdmin ? $user->name : session('employe')->nom . ' ' . session('employe')->prenom }}
-                            </span>
-                            <i class="mdi mdi-menu-down d-none d-sm-inline ms-1"></i>
-                        </div>
-                    @endif
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="profileDropdown">
-                    <li class="dropdown-header p-3">Profil</li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item preview-item" href="#">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-dark rounded-circle">
-                                    <i class="mdi mdi-cog text-success"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <p class="preview-subject mb-1">Paramètres</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="dropdown-item preview-item w-100 text-start" style="background: none; border: none;">
-                                <div class="preview-thumbnail">
-                                    <div class="preview-icon bg-dark rounded-circle">
-                                        <i class="mdi mdi-logout text-danger"></i>
-                                    </div>
-                                </div>
-                                <div class="preview-item-content">
-                                    <p class="preview-subject mb-1">Se Déconnecter</p>
-                                </div>
-                            </button>
-                        </form>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li class="dropdown-footer text-center p-2"><a href="#">Advanced settings</a></li>
-                </ul>
-            </li>
-        </ul>
 
-        <!-- Responsive toggle -->
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-            <span class="mdi mdi-format-line-spacing"></span>
-        </button>
+                        @if ($isAdmin)
+                            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
+                                style="width: 40px; height: 40px; font-weight: 700; font-size: 1.25rem; user-select:none;">
+                                {{ Str::upper(substr($user->name, 0, 1)) }}{{ Str::upper(substr($user->name, strpos($user->name, ' ') + 1, 1)) }}
+                            </div>
+                        @else
+                            <img src="{{ asset('storage/' . (session('employe')->photo ?? 'default.png')) }}"
+                                alt="Avatar" class="rounded-circle me-2" width="40" height="40" />
+                        @endif
+
+                        <span class="d-none d-lg-inline fw-semibold text-white">
+                            {{ $isAdmin ? $user->name : session('employe')->nom . ' ' . session('employe')->prenom }}
+                        </span>
+                    </a>
+
+                    <ul id="dropdownMenu" class="dropdown-menu dropdown-menu-end shadow-sm border-0 text-white"
+                        role="menu" aria-labelledby="profileDropdown"
+                        style="
+                position: absolute;
+                top: 100%;
+                right: 0;
+                min-width: 200px;
+                background-color: #343a40;
+                border-radius: 0.25rem;
+                padding: 0.5rem 0;
+                box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+                z-index: 1050;
+                display: none;
+              ">
+                        <li>
+                            <h6 class="dropdown-header">Mon Profil</h6>
+                        </li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}"><i
+                                    class="mdi mdi-account-edit me-2 text-primary"></i>Modifier profil</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
+                                @csrf
+                                <button type="submit" class="dropdown-item d-flex align-items-center text-danger"
+                                    style="background:none; border:none; cursor:pointer;">
+                                    <i class="mdi mdi-logout me-2"></i>Se déconnecter
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
     </div>
 </nav>
-<!-- partial -->
+
+<style>
+    /* Navbar text */
+    .navbar-light .navbar-nav .nav-link {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Hover for dropdown items */
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #e7f1ff;
+        color: #0d6efd !important;
+    }
+
+    /* Modal fade animation */
+    .modal.fade .modal-dialog {
+        transition: transform 0.3s ease-out;
+        transform: translateY(-25px);
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: translateY(0);
+    }
+
+    /* Inputs with better focus */
+    input.form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 6px #0d6efd99;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+        font-weight: 600;
+    }
+
+    .btn-primary:hover {
+        background-color: #084ecb;
+    }
+
+    .btn-outline-secondary {
+        border-color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const profileToggle = document.getElementById('profileDropdown');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        profileToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isVisible = dropdownMenu.style.display === 'block';
+            if (isVisible) {
+                dropdownMenu.style.display = 'none';
+                profileToggle.setAttribute('aria-expanded', 'false');
+            } else {
+                dropdownMenu.style.display = 'block';
+                profileToggle.setAttribute('aria-expanded', 'true');
+            }
+        });
+
+        // Fermer le menu quand on clique ailleurs
+        document.addEventListener('click', (e) => {
+            if (!profileToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+                profileToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Fermer avec Échap (optionnel)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdownMenu.style.display = 'none';
+                profileToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+</script>
