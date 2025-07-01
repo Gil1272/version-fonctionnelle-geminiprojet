@@ -6,6 +6,7 @@ use App\Models\Projet;
 use App\Models\Tache; // N'oubliez pas d'importer le modèle Employe
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TacheController extends Controller
 {
@@ -13,9 +14,27 @@ class TacheController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return view('taches.index');
-    }
+{
+    $employe = auth()->user();
+
+    // Récupérer les tâches de l'employé, avec les projets associés et trier par date_fin
+    $tasks = Tache::where('employe_id', $employe->id)
+                 ->with('projet')
+                 ->orderBy('end_date', 'asc')
+                 ->get();
+
+    // Grouper les tâches par projet
+    $tasksGroupedByProjet = $tasks->groupBy(function ($task) {
+        return $task->projet->id;
+    });
+
+    return view('taches.index', [
+        'tasksGroupedByProjet' => $tasksGroupedByProjet,
+    ]);
+}
+
+
+
 
     public function create()
     {
@@ -59,4 +78,19 @@ class TacheController extends Controller
 
     return redirect()->back()->with('success', 'Tâche créée avec succès !');
 }
+
+public function update(Request $request, Tache $task)
+{
+    Log::info('user_id de la tâche : ' . $task->employe_id);
+    Log::info('ID de l\'utilisateur connecté : ' . auth()->id());
+
+    if ($task->employe_id !== auth()->id()) {
+        abort(403);
+    }
+
+    $task->update(['status' => 'completed']);
+
+    return redirect()->route('taches.index')->with('success', 'Tâche marquée comme terminée.');
+}
+
 }

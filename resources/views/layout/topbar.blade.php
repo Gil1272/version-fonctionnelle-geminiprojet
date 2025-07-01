@@ -53,8 +53,13 @@
                         <li>
                             <h6 class="dropdown-header">Mon Profil</h6>
                         </li>
-                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}"><i
-                                    class="mdi mdi-account-edit me-2 text-primary"></i>Modifier profil</a></li>
+                        @if (!$isAdmin)
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}">
+                                    <i class="mdi mdi-cog me-2 text-primary"></i>Paramètres
+                                </a>
+                            </li>
+                        @endif
                         <li>
                             <hr class="dropdown-divider">
                         </li>

@@ -34,6 +34,7 @@ Route::middleware(['auth:web,employe'])->group(function () {
         Route::get('/create', [TacheController::class, 'create'])->name('taches.create');
         Route::post('/create', [TacheController::class, 'store'])->name('taches.store');
         Route::get('/edit/{employe}', [TacheController::class, 'edit'])->name('taches.edit');
+        Route::patch('/{task}', [TacheController::class, 'update'])->name('taches.update');
     });
 
     Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');

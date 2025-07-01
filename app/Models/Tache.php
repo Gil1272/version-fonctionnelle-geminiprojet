@@ -27,4 +27,16 @@ class Tache extends Model
     {
         return $this->belongsTo(Employe::class, 'employe_id');
     }
+
+    public function tasks()
+{
+    return $this->hasMany(Tache::class, 'projet_id');
+}
+
+
+public function projet()
+{
+    return $this->belongsTo(Projet::class, 'projet_id');
+}
+
 }

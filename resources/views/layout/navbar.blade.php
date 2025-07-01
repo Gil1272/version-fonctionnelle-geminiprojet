@@ -2,11 +2,22 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
         <a class="sidebar-brand brand-logo"
-            href="https://www.goafricaonline.com/bj/843293-gemini-company-informatique-cotonou-benin" target="_blank"><img
-                src="{{ asset('assets/images/text-logo.png') }}" alt="logo" /></a>
-        <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="{{ asset('assets/images/logo.png') }}"
-                alt="logo" /></a>
+            href="https://www.goafricaonline.com/bj/843293-gemini-company-informatique-cotonou-benin" target="_blank"
+            aria-label="GEMINI CO">
+            <svg width="150" height="40" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg" role="img"
+                aria-labelledby="title">
+                <title>Logo GEMINI CO</title>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                    font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="48" fill="#FFFFFF">
+                    GEMINI CO
+                </text>
+            </svg>
+        </a>
+        {{-- <a class="sidebar-brand brand-logo-mini" href="index.html">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="logo" />
+        </a> --}}
     </div>
+
     <ul class="nav">
         <li class="nav-item profile">
             <div class="profile-desc">
@@ -156,12 +167,33 @@
             </div>
         </li>
 
-        <!-- Autres menus -->
+        <!-- Mes Tâches -->
         <li class="nav-item menu-items">
+            <a class="nav-link" data-bs-toggle="collapse" href="#projets-menu" aria-expanded="false"
+                aria-controls="projets-menu">
+                <span class="menu-icon"><i class="mdi mdi-folder-multiple"></i></span>
+                <span class="menu-title">Mes Tâches</span>
+                <i class="menu-arrow bi bi-chevron-right"></i>
+
+            </a>
+            <div class="collapse" id="projets-menu" data-bs-parent="#sidebar">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('taches.index') }}">Listes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('taches.create') }}">Créer une tâche</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <!-- Autres menus -->
+        {{-- <li class="nav-item menu-items">
             <a class="nav-link" href="{{ route('taches.create') }}">
                 <span class="menu-icon"><i class="mdi mdi-playlist-play"></i></span>
                 <span class="menu-title">Tâches</span>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </nav>

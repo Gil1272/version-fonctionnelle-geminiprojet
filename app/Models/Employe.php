@@ -27,6 +27,15 @@ class Employe extends Authenticatable
     return $this->morphMany(Commentaire::class, 'commentable');
 }
 
+public function tasks()
+{
+    return $this->hasMany(Tache::class, 'employe_id'); // 'employe_id' est la clé étrangère dans la table tasks
+}
+
+public function projets()
+{
+    return $this->hasMany(Projet::class, 'employe_id');
+}
 }
 
 
