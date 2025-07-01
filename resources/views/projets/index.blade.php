@@ -94,8 +94,9 @@
                             @php
                                 $statusClass = 'bg-secondary';
                                 $statusText = 'En cours';
-                                $progression = $projet->progression ?? 0;
-
+                                $totalTaches = $projet->taches->count();
+                                $tachesCompletes = $projet->taches->where('status', 'completed')->count();
+                                $progression = $totalTaches > 0 ? round(($tachesCompletes / $totalTaches) * 100) : 0;
                                 if ($progression == 100) {
                                     $statusClass = 'bg-success';
                                     $statusText = 'Terminé';
