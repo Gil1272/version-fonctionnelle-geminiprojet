@@ -256,7 +256,7 @@
                 <h3 class="page-title"> Employés </h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#">Mes Employés</a></li>
+                        <li class="breadcrumb-item"><a href="#">Employés</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Liste</li>
                     </ol>
                 </nav>

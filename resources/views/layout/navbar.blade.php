@@ -130,7 +130,7 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#employes-menu" aria-expanded="false"
                 aria-controls="employes-menu">
                 <span class="menu-icon"><i class="mdi mdi-account-multiple"></i></span>
-                <span class="menu-title">Les employés</span>
+                <span class="menu-title">Employés</span>
                 <i class="menu-arrow bi bi-chevron-right"></i>
 
             </a>
@@ -151,7 +151,7 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#projets-menu" aria-expanded="false"
                 aria-controls="projets-menu">
                 <span class="menu-icon"><i class="mdi mdi-folder-multiple"></i></span>
-                <span class="menu-title">Mes projets</span>
+                <span class="menu-title">Projets</span>
                 <i class="menu-arrow bi bi-chevron-right"></i>
 
             </a>
@@ -172,7 +172,7 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#projets-menu" aria-expanded="false"
                 aria-controls="projets-menu">
                 <span class="menu-icon"><i class="mdi mdi-folder-multiple"></i></span>
-                <span class="menu-title">Mes Tâches</span>
+                <span class="menu-title">Tâches</span>
                 <i class="menu-arrow bi bi-chevron-right"></i>
 
             </a>
