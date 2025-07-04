@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TacheController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 // Redirection de la racine vers login
@@ -14,10 +15,25 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Dans web.php
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+// Routes pour la réinitialisation de mot de passe
+Route::middleware('guest')->group(function () {
+    // Afficher le formulaire de demande de réinitialisation
+    Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])
+        ->name('password.request');
+
+    // Envoyer le lien de réinitialisation
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
+
+    // Afficher le formulaire de réinitialisation
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+        ->name('password.reset');
+
+    // Traiter la réinitialisation
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+        ->name('password.update');
+});
+
 // Routes d'authentification
 Route::middleware('guest:web,employe')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');

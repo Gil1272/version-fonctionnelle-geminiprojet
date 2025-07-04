@@ -2,87 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
+
 class ProfileController extends Controller
 {
-    // Afficher le formulaire de modification du profil
-    public function edit()
+    /**
+     * Display the user's profile form.
+     */
+    public function edit(Request $request): View
     {
-        $user = Auth::user();
-        return view('profile.edit', compact('user'));
+        return view('profile.edit', [
+            'user' => $request->user(),
+        ]);
     }
 
-    // Mettre à jour les informations personnelles
-    public function update(Request $request)
+    /**
+     * Update the user's profile information.
+     */
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = Auth::user();
+        $request->user()->fill($request->validated());
 
-        $request->validate([
-            'nom'    => 'required|string|max:255',
-            'prenom'    => 'required|string|max:255',
-            'email'   => 'required|email|unique:users,email,' . $user->id,
-            'contact'   => 'nullable|string|max:20',
-            'adresse' => 'nullable|string|max:255',
-            'photo'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $user->nom    = $request->nom;
-        $user->prenom    = $request->prenom;
-        $user->email   = $request->email;
-        $user->contact   = $request->contact;
-        $user->adresse = $request->adresse;
-
-        // Gestion de l'avatar
-        if ($request->hasFile('photo')) {
-            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-                Storage::disk('public')->delete($user->photo);
-            }
-
-            $user->photo = $request->file('photo')->store('employes', 'public');
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
         }
 
+        $request->user()->save();
 
-        Log::info('Mise à jour du profil :', [
-            'user_id' => $user->id,
-            'nom' => $request->nom,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'adresse' => $request->adresse,
-            'photo' => $user->photo,
-        ]);
-
-
-        $user->save();
-
-        if (session()->has('employe')) {
-            session(['employe' => $user]);
-        }
-
-        return redirect()->route('profile.edit')->with('success', 'Profil mis à jour avec succès.');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    // Mettre à jour le mot de passe
-    public function updatePassword(Request $request)
+    /**
+     * Delete the user's account.
+     */
+    public function destroy(Request $request): RedirectResponse
     {
-        $user = Auth::user();
-
-        $request->validate([
-            'current_password'      => 'required',
-            'password'              => 'required|string|min:8|confirmed',
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
         ]);
 
-        // Vérifier l'ancien mot de passe
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
-        }
+        $user = $request->user();
 
-        $user->password = Hash::make($request->password);
-        $user->save();
+        Auth::logout();
 
-        return redirect()->route('profile.edit')->with('success', 'Mot de passe mis à jour avec succès.');
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
     }
 }

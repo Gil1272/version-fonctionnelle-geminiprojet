@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+         // Enregistrer le service de réinitialisation de mot de passe
+         $this->app->singleton(PasswordResetService::class, function ($app) {
+            return new PasswordResetService();
+        });
     }
 
     /**
