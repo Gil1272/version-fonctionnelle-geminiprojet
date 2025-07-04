@@ -22,10 +22,12 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        $remember = $request->has('remember'); // <--- récupère la case à cocher
+
         // Vérifier si l'utilisateur est un ADMIN (User)
         if ($user = User::where('email', $request->email)->first()) {
             if (Hash::check($request->password, $user->password)) {
-                Auth::guard('web')->login($user);
+                Auth::guard('web')->login($user, $remember); // <-- passe $remember ici
                 session()->put('role', 'admin');
                 return redirect()->route('dashboard'); // Redirige vers le dashboard Admin
             }
@@ -34,7 +36,7 @@ class AuthController extends Controller
         // Vérifier si l'utilisateur est un EMPLOYÉ (Employe)
         if ($employe = Employe::where('email', $request->email)->first()) {
             if (Hash::check($request->password, $employe->password)) {
-                Auth::guard('employe')->login($employe); // Utiliser le guard 'employe'
+                Auth::guard('employe')->login($employe, $remember); // <-- passe $remember ici
                 session()->put('employe', $employe);
                 return redirect()->route('dashboard'); // Redirige vers le dashboard Employé
             }

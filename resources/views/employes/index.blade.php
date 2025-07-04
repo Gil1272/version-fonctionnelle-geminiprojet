@@ -251,7 +251,24 @@
     </style>
 
     <div class="main-panel">
+        {{-- <pre>{{ dd(session()->all()) }}</pre> --}}
         <div class="content-wrapper">
+            @if (isset($success) || isset($error))
+                <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3"
+                    style="z-index: 1080; min-width: 300px;">
+                    <div class="toast align-items-center text-white border-0 shadow-lg" id="mainToast" role="alert"
+                        aria-live="assertive" aria-atomic="true"
+                        style="background: {{ isset($success) ? '#28a745' : '#dc3545' }}; border-radius: 12px;">
+                        <div class="d-flex">
+                            <div class="toast-body fw-bold" style="font-size: 1.1rem;">
+                                {{ $success ?? $error }}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Fermer" style="opacity: 0.9;"></button>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="page-header">
                 <h3 class="page-title"> Employés </h3>
                 <nav aria-label="breadcrumb">
@@ -265,6 +282,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="card-title">Ajout <code>employé</code></h4>
                             <a class="nav-link btn btn-success create-new-button" href="{{ route('employes.create') }}">+
@@ -365,8 +383,8 @@
                                                 <i class="mdi mdi-account-circle me-2"></i>
                                                 Profil de {{ $employe->nom }} {{ $employe->prenom }}
                                             </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
 
                                         <div class="modal-body">
@@ -468,4 +486,16 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function() {
+            var toastEl = document.getElementById('mainToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, {
+                    delay: 3000
+                });
+                toast.show();
+            }
+        });
+    </script>
 @endsection

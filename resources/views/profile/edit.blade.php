@@ -21,40 +21,44 @@
                 <div class="tab-content mt-3" id="editTabsContent">
                     <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         {{-- Contenu PROFIL --}}
-                        <div class="row">
-                            <div class="col-xl-4">
-                                <div class="card mb-4 mb-xl-0">
-                                    <div class="card-header">Photo de profil</div>
-                                    <div class="card-body text-center">
-                                        @if ($user->photo && file_exists(public_path('storage/' . $user->photo)))
-                                            <img class="img-account-profile rounded-circle mb-2"
-                                                src="{{ asset('storage/' . $user->photo) }}" alt="Photo de profil"
-                                                style="width: 150px; height: 150px; object-fit: cover;">
-                                        @else
-                                            <img class="img-account-profile rounded-circle mb-2"
-                                                src="http://bootdey.com/img/Content/avatar/avatar1.png"
-                                                alt="Photo de profil par défaut"
-                                                style="width: 150px; height: 150px; object-fit: cover;">
-                                        @endif
-                                        <div class="small font-italic text-muted mb-4">JPG ou PNG ne dépassant pas 5 MB
+                        <!-- Formulaire englobant toute la section profil -->
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data"
+                            id="mainForm">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <div class="card mb-4 mb-xl-0">
+                                        <div class="card-header">Photo de profil</div>
+                                        <div class="card-body text-center">
+                                            @if ($user->photo && file_exists(public_path('storage/' . $user->photo)))
+                                                <img class="img-account-profile rounded-circle mb-2"
+                                                    src="{{ asset('storage/' . $user->photo) }}" alt="Photo de profil"
+                                                    style="width: 150px; height: 150px; object-fit: cover;">
+                                            @else
+                                                <img class="img-account-profile rounded-circle mb-2"
+                                                    src="http://bootdey.com/img/Content/avatar/avatar1.png"
+                                                    alt="Photo de profil par défaut"
+                                                    style="width: 150px; height: 150px; object-fit: cover;">
+                                            @endif
+                                            <div class="small font-italic text-muted mb-3">JPG ou PNG ne dépassant pas 5 MB
+                                            </div>
+
+                                            <!-- Input file et bouton pour changer la photo -->
+                                            <input type="file" name="photo" id="avatarInput" accept="image/*"
+                                                style="display: none;">
+                                            <button class="btn btn-primary btn-sm" type="button"
+                                                onclick="document.getElementById('avatarInput').click()">
+                                                <i class="fas fa-camera me-1"></i>Changer la photo
+                                            </button>
                                         </div>
-                                        <input type="file" name="avatar" id="avatarInput" accept="image/*"
-                                            style="display: none;">
-                                        <button class="btn btn-primary" type="button"
-                                            onclick="document.getElementById('avatarInput').click()">
-                                            Changer la photo
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-8">
-                                <div class="card mb-4">
-                                    <div class="card-header">Détails du compte</div>
-                                    <div class="card-body">
-                                        <form action="{{ route('profile.update') }}" method="POST"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
+                                <div class="col-xl-8">
+                                    <div class="card mb-4">
+                                        <div class="card-header">Détails du compte</div>
+                                        <div class="card-body">
                                             <div class="row">
                                                 <div class="card-body">
                                                     <div class="row gx-3 mb-3">
@@ -98,13 +102,12 @@
                                                     <button class="btn btn-primary" type="submit">Enregistrer les
                                                         modifications</button>
                                                 </div>
-
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
 
                     <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
@@ -200,9 +203,7 @@
 
         // Upload automatique de l'avatar
         document.getElementById('avatarInput').addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                document.getElementById('avatarForm').submit();
-            }
+            document.getElementById('mainForm').submit();
         });
     </script>
 

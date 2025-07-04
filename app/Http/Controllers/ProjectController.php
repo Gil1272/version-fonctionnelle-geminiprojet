@@ -11,13 +11,11 @@ class ProjectController extends Controller
      * Display a listing of the resource.
      * Récupérer tous les projets
      */
-    public function index()
+    public function index(Request $request)
     {
         $projets = Projet::with(['taches.employee', 'superviseur', 'commentaires.commentable'])->get();
-
-
-        // $projets = Projet::with(['superviseur', 'taches'])->get();
-        return view('projets.index', compact('projets'));
+        $success = $request->query('success');
+        return view('projets.index', compact('projets', 'success'));
 
     }
 
@@ -51,7 +49,8 @@ class ProjectController extends Controller
 
         Projet::create($request->all());
 
-        return redirect()->route('projets.index')->with('success', 'Projet créé avec succès.');
+        // Passe le message dans la query string
+        return redirect()->route('projets.index', ['success' => 'Projet créé avec succès.']);
     }
 
     public function edit(Projet $projet)
@@ -86,7 +85,7 @@ class ProjectController extends Controller
 
     $projet->update($validated);
 
-    return redirect()->route('projets.index')->with('success', 'Projet mis à jour avec succès.');
+    return redirect()->route('projets.index', ['success' => 'Projet mis à jour avec succès.']);
 }
 
     /**
@@ -94,6 +93,7 @@ class ProjectController extends Controller
      */
     public function destroy(Projet $projet)
     {
-        //
+        $projet->delete();
+        return redirect()->route('projets.index', ['success' => 'Projet supprimé avec succès.']);
     }
 }

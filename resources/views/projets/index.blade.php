@@ -2,6 +2,22 @@
 
 @section('content')
     <div class="main-panel">
+        @if (isset($success) || isset($error))
+            <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3"
+                style="z-index: 1080; min-width: 300px;">
+                <div class="toast align-items-center text-white border-0 shadow-lg" id="mainToast" role="alert"
+                    aria-live="assertive" aria-atomic="true"
+                    style="background: {{ isset($success) ? '#28a745' : '#dc3545' }}; border-radius: 12px;">
+                    <div class="d-flex">
+                        <div class="toast-body fw-bold" style="font-size: 1.1rem;">
+                            {{ $success ?? $error }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Fermer" style="opacity: 0.9;"></button>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="content-wrapper">
             <div class="page-header">
                 <h3 class="page-title"> Projets </h3>
@@ -16,6 +32,8 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+
+
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="card-title">Ajout <code>projet</code></h4>
                             <a class="nav-link btn btn-success create-new-button" href="{{ route('projets.create') }}">+
@@ -37,7 +55,16 @@
                                     @foreach ($projets as $projet)
                                         <tr>
                                             <td>{{ $projet->nom }}</td>
-                                            <td>{{ $projet->description }}</td>
+                                            <td>
+                                                @if (Str::length($projet->description) > 80)
+                                                    <span
+                                                        class="short-desc">{{ Str::limit($projet->description, 20) }}</span>
+                                                    <span class="full-desc d-none">{{ $projet->description }}</span>
+                                                    <a href="#" class="voir-plus-link">Voir plus</a>
+                                                @else
+                                                    {{ $projet->description }}
+                                                @endif
+                                            </td>
                                             <td>{{ \Carbon\Carbon::parse($projet->date_debut)->format('F j, Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($projet->date_fin)->format('F j, Y') }}</td>
                                             <td>
@@ -49,14 +76,11 @@
                                                     class="btn btn-warning btn-sm">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </a>
-                                                <form action="{{ route('projets.destroy', $projet->id) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="mdi mdi-delete"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Bouton qui ouvre le modal de confirmation -->
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#confirmDeleteModal{{ $projet->id }}">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -458,42 +482,44 @@
                             <div class="tab-pane fade" id="comments-{{ $projet->id }}">
                                 <!-- Liste des commentaires -->
                                 <div class="mb-4" style="max-height: 400px; overflow-y: auto;">
-                                    @forelse ($projet->commentaires as $commentaire)
-                                        <div class="card mb-3 shadow-sm">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-start">
-                                                    <div class="me-3">
-                                                        @if ($commentaire->commentable->photo ?? false)
-                                                            <img src="{{ asset('storage/' . $commentaire->commentable->photo) }}"
-                                                                alt="Photo" class="rounded-circle"
-                                                                style="width: 40px; height: 40px; object-fit: cover;">
-                                                        @else
-                                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
-                                                                style="width: 40px; height: 40px;">
-                                                                <i class="mdi mdi-account text-white"></i>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center mb-2">
-                                                            <h6 class="mb-0">
-                                                                {{ $commentaire->commentable->nom ?? 'Anonyme' }}</h6>
-                                                            <small
-                                                                class="text-muted">{{ $commentaire->created_at->diffForHumans() }}</small>
+                                    <div id="comments-list-{{ $projet->id }}">
+                                        @forelse ($projet->commentaires as $commentaire)
+                                            <div class="card mb-3 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="me-3">
+                                                            @if ($commentaire->commentable->photo ?? false)
+                                                                <img src="{{ asset('storage/' . $commentaire->commentable->photo) }}"
+                                                                    alt="Photo" class="rounded-circle"
+                                                                    style="width: 40px; height: 40px; object-fit: cover;">
+                                                            @else
+                                                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                                                                    style="width: 40px; height: 40px;">
+                                                                    <i class="mdi mdi-account text-white"></i>
+                                                                </div>
+                                                            @endif
                                                         </div>
-                                                        <p class="mb-0">{{ $commentaire->contenu }}</p>
+                                                        <div class="flex-grow-1">
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center mb-2">
+                                                                <h6 class="mb-0">
+                                                                    {{ $commentaire->commentable->nom ?? 'Anonyme' }}</h6>
+                                                                <small
+                                                                    class="text-muted">{{ $commentaire->created_at->diffForHumans() }}</small>
+                                                            </div>
+                                                            <p class="mb-0">{{ $commentaire->contenu }}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @empty
-                                        <div class="text-center py-5">
-                                            <i class="mdi mdi-message-outline display-1 text-muted"></i>
-                                            <h5 class="text-muted mt-3">Aucun commentaire</h5>
-                                            <p class="text-muted">Soyez le premier à commenter ce projet.</p>
-                                        </div>
-                                    @endforelse
+                                        @empty
+                                            <div class="text-center py-5">
+                                                <i class="mdi mdi-message-outline display-1 text-muted"></i>
+                                                <h5 class="text-muted mt-3">Aucun commentaire</h5>
+                                                <p class="text-muted">Soyez le premier à commenter ce projet.</p>
+                                            </div>
+                                        @endforelse
+                                    </div>
                                 </div>
 
                                 <!-- Formulaire d'ajout de commentaire -->
@@ -504,7 +530,8 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
-                                        <form action="{{ route('commentaires.store', $projet->id) }}" method="POST">
+                                        <form id="comment-form-{{ $projet->id }}"
+                                            action="{{ route('commentaires.store', $projet->id) }}" method="POST">
                                             @csrf
                                             <div class="mb-3">
                                                 <textarea name="contenu" rows="3" class="form-control" placeholder="Écrivez votre commentaire..." required></textarea>
@@ -549,6 +576,42 @@
             </div>
         </div>
     @endforeach
+
+    @foreach ($projets as $projet)
+        <div class="modal fade" id="confirmDeleteModal{{ $projet->id }}" tabindex="-1"
+            aria-labelledby="confirmDeleteLabel{{ $projet->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header bg-danger text-white rounded-top-4">
+                        <h5 class="modal-title fw-bold" id="confirmDeleteLabel{{ $projet->id }}">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Suppression du projet
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body fs-5 text-muted">
+                        Êtes-vous sûr de vouloir supprimer le projet
+                        <strong class="text-white">{{ $projet->nom }}</strong> ?
+                        <br>
+                        <small class="text-danger fst-italic">Cette action est irréversible.</small>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">Annuler</button>
+                        <form action="{{ route('projets.destroy', $projet->id) }}" method="POST"
+                            style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                                Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
 
     <style>
         .btn-outline-secondary {
@@ -601,5 +664,73 @@
         .rounded-circle:hover {
             transform: scale(1.07);
         }
+
+        td .full-desc,
+        td .short-desc {
+            white-space: pre-line;
+            word-break: break-word;
+            /* Permet le retour à la ligne même sur les mots longs */
+        }
+
+        td {
+            max-width: 350px;
+            /* Ajuste la largeur max selon ton design */
+            white-space: normal !important;
+            /* Permet le retour à la ligne dans toutes les cellules */
+        }
+
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal.fade .modal-dialog {
+            transform: translateY(-50px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: translateY(0);
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            @foreach ($projets as $projet)
+                $('#comment-form-{{ $projet->id }}').on('submit', function(e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var url = form.attr('action');
+                    var data = form.serialize();
+                    $.post(url, data)
+                        .done(function(response) {
+                            // Recharge la liste des commentaires via AJAX
+                            $('#comments-list-{{ $projet->id }}').load(location.href +
+                                ' #comments-list-{{ $projet->id }} > *');
+                            form[0].reset();
+                        })
+                        .fail(function(xhr) {
+                            alert('Erreur lors de l\'ajout du commentaire');
+                        });
+                });
+            @endforeach
+        });
+
+        $(document).on('click', '.voir-plus-link', function(e) {
+            e.preventDefault();
+            var $td = $(this).closest('td');
+            $td.find('.short-desc').addClass('d-none');
+            $td.find('.full-desc').removeClass('d-none');
+            $(this).remove();
+        });
+
+        $(function() {
+            var toastEl = document.getElementById('mainToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, {
+                    delay: 3000
+                });
+                toast.show();
+            }
+        });
+    </script>
 @endsection

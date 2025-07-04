@@ -21,6 +21,9 @@ class CommentaireController extends Controller
     $auteur = $user ?? $employe;
 
     if (!$auteur) {
+        if ($request->ajax()) {
+            return response()->json(['error' => 'Vous devez être connecté pour commenter.'], 401);
+        }
         return back()->withErrors('Vous devez être connecté pour commenter.');
     }
 
@@ -29,6 +32,10 @@ class CommentaireController extends Controller
         'commentable_id' => $auteur->id,
         'commentable_type' => get_class($auteur),
     ]);
+
+    if ($request->ajax()) {
+        return response()->json(['success' => 'Commentaire ajouté.']);
+    }
 
     return back()->with('success', 'Commentaire ajouté.');
 }

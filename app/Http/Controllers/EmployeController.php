@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Log;
 class EmployeController extends Controller
 {
 
@@ -18,6 +18,8 @@ class EmployeController extends Controller
      */
     public function index()
     {
+        \Log::info('Message flash :', session()->get('_flash')); // Contient les clés à flasher
+        \Log::info('Success :', ['success' => session('success')]);
         $employes = Employe::all(); // Récupère tous les employés
         return view('employes.index', compact('employes'));
     }
@@ -55,11 +57,8 @@ class EmployeController extends Controller
             }
 
             // Génération et hachage du mot de passe
-            $password                  = Str::random(8);
-            $validatedData['password'] = Hash::make($password);
-
-            // Création de l'employé avec log
-            \Log::info('Tentative de création d\'employé avec les données:', $validatedData);
+            $password                  = \Illuminate\Support\Str::random(8);
+            $validatedData['password'] = \Illuminate\Support\Facades\Hash::make($password);
 
             $employee = Employe::create($validatedData);
 
@@ -68,23 +67,20 @@ class EmployeController extends Controller
             }
 
             // Envoi du mail avec les identifiants
-            Mail::to($employee->email)->send(new NewEmployeeCredentials($employee, $password));
+            \Illuminate\Support\Facades\Mail::to($employee->email)->send(new \App\Mail\NewEmployeeCredentials($employee, $password));
 
             DB::commit();
 
-            \Log::info('Employé créé avec succès. ID: ' . $employee->id);
-
-            return redirect()->route('employes.index')->with('success', 'Employé créé avec succès.');
+            // Retourner la vue avec le message de succès
+            $employes = Employe::all();
+            return view('employes.index', compact('employes'))->with('success', 'Employé créé avec succès.');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('Erreur lors de la création de l\'employé: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Une erreur est survenue lors de la création: ' . $e->getMessage());
+            // Retourner la vue avec le message d'erreur
+            $employes = Employe::all();
+            return view('employes.index', compact('employes'))->with('error', 'Une erreur est survenue lors de la création: ' . $e->getMessage());
         }
     }
 
@@ -118,31 +114,28 @@ class EmployeController extends Controller
         $employe->genre   = $request->genre;
         $employe->adresse = $request->adresse;
 
-        // Vérifier si une nouvelle photo a été téléchargée
         if ($request->hasFile('photo')) {
-            // Supprimer l'ancienne photo si elle existe
             if ($employe->photo) {
                 Storage::delete($employe->photo);
             }
-            // Enregistrer la nouvelle photo
-            $employe->photo = $request->file('photo')->store('photos');
+            $employe->photo = $request->file('photo')->store('employes', 'public');
         }
 
         $employe->save();
 
-        return redirect()->route('employes.index')->with('success', 'Employé mis à jour avec succès.');
+        $employes = Employe::all();
+        return view('employes.index', compact('employes'))->with('success', 'Employé mis à jour avec succès.');
     }
 
     public function destroy(Employe $employe)
     {
-        // Supprimer la photo si elle existe
         if ($employe->photo && Storage::disk('public')->exists($employe->photo)) {
             Storage::disk('public')->delete($employe->photo);
         }
 
         $employe->delete();
 
-        return redirect()->route('employes.index')
-            ->with('success', 'Employé supprimé avec succès');
+        $employes = Employe::all();
+        return view('employes.index', compact('employes'))->with('success', 'Employé supprimé avec succès');
     }
 }

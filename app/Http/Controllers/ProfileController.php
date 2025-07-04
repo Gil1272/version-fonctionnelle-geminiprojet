@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Log;
 class ProfileController extends Controller
 {
     // Afficher le formulaire de modification du profil
@@ -37,25 +37,30 @@ class ProfileController extends Controller
         $user->adresse = $request->adresse;
 
         // Gestion de l'avatar
-        if ($request->hasFile('avatar')) {
-            // Supprimer l'ancienne photo si elle existe
+        if ($request->hasFile('photo')) {
             if ($user->photo && Storage::disk('public')->exists($user->photo)) {
                 Storage::disk('public')->delete($user->photo);
             }
-            // Enregistrer la nouvelle photo
-            $user->avatar = $request->file('photo')->store('photo', 'public');
+
+            $user->photo = $request->file('photo')->store('employes', 'public');
         }
 
-        // Log::info('Mise à jour du profil :', [
-        //     'user_id' => $user->id,
-        //     'nom' => $request->nom,
-        //     'email' => $request->email,
-        //     'phone' => $request->phone,
-        //     'adresse' => $request->adresse,
-        // ]);
+
+        Log::info('Mise à jour du profil :', [
+            'user_id' => $user->id,
+            'nom' => $request->nom,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'adresse' => $request->adresse,
+            'photo' => $user->photo,
+        ]);
 
 
         $user->save();
+
+        if (session()->has('employe')) {
+            session(['employe' => $user]);
+        }
 
         return redirect()->route('profile.edit')->with('success', 'Profil mis à jour avec succès.');
     }

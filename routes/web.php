@@ -14,6 +14,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Dans web.php
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 // Routes d'authentification
 Route::middleware('guest:web,employe')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -35,6 +39,10 @@ Route::middleware(['auth:web,employe'])->group(function () {
         Route::post('/create', [TacheController::class, 'store'])->name('taches.store');
         Route::get('/edit/{employe}', [TacheController::class, 'edit'])->name('taches.edit');
         Route::patch('/{task}', [TacheController::class, 'update'])->name('taches.update');
+    });
+
+    Route::get('/test-flash', function () {
+        return redirect('/employes')->with('success', 'Message de succès depuis route test');
     });
 
     Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');
