@@ -8,9 +8,9 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $totalProjects     = Projet::count();
-        $ongoingProjects   = Projet::where('statut', 'in_progress')->count();
+        $ongoingProjects   = Projet::where('statut', 'pending')->count();
         $completedProjects = Projet::where('statut', 'completed')->count();
-        $openProjects      = Projet::where('statut', 'in_progress')->with('taches')->get(); //, 'issues'
+        $openProjects      = Projet::where('statut', 'pending')->with('taches')->get(); //, 'issues'
 
         return view('dashboard', [
             'totalProjects'     => $totalProjects,

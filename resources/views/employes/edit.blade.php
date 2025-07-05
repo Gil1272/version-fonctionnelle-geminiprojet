@@ -109,9 +109,10 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-check-circle me-2"></i> Mettre à jour l'employé
                                         </button>
-                                        <button type="reset" class="btn btn-outline-secondary">
-                                            <i class="bi bi-x-circle me-2"></i> Réinitialiser
-                                        </button>
+                                        <a href="{{ route('employes.index') }}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            Retour
+                                        </a>
                                     </div>
                                 </div>
                             </div>

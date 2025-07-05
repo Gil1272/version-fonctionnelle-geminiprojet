@@ -57,10 +57,6 @@ Route::middleware(['auth:web,employe'])->group(function () {
         Route::patch('/{task}', [TacheController::class, 'update'])->name('taches.update');
     });
 
-    Route::get('/test-flash', function () {
-        return redirect('/employes')->with('success', 'Message de succès depuis route test');
-    });
-
     Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');
 
     Route::get('/profile/edit', function () {

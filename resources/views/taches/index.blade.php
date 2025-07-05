@@ -5,7 +5,13 @@
         <h2 class="mb-4">Mes Tâches par Projet</h2>
 
         @if ($tasksGroupedByProjet->isEmpty())
-            <p>Aucune tâche assignée pour le moment.</p>
+            <div class="text-center mb-5">
+                <img src="{{ asset('assets/images/no-task.png') }}" alt="Aucune tâche" style="max-width: 300px;">
+                <h4 class="mt-4 text-muted">Aucune tâche assignée</h4>
+                <p class="text-secondary">Vous n'avez actuellement aucune tâche à faire. Contactez votre superviseur pour en
+                    avoir
+                </p>
+            </div>
         @else
             @foreach ($tasksGroupedByProjet as $projetId => $tasks)
                 <div class="mb-5">
