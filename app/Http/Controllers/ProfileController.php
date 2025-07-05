@@ -2,59 +2,87 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    // Afficher le formulaire de modification du profil
+    public function edit()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    // Mettre à jour les informations personnelles
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
+        $request->validate([
+            'nom'    => 'required|string|max:255',
+            'prenom'    => 'required|string|max:255',
+            'email'   => 'required|email|unique:users,email,' . $user->id,
+            'contact'   => 'nullable|string|max:20',
+            'adresse' => 'nullable|string|max:255',
+            'photo'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->nom    = $request->nom;
+        $user->prenom    = $request->prenom;
+        $user->email   = $request->email;
+        $user->contact   = $request->contact;
+        $user->adresse = $request->adresse;
+
+        // Gestion de l'avatar
+        if ($request->hasFile('photo')) {
+
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+
+            $user->photo = $request->file('photo')->store('employes', 'public');
         }
 
-        $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        Log::info('Mise à jour du profil :', [
+            'user_id' => $user->id,
+            'nom' => $request->nom,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'adresse' => $request->adresse,
+            'photo' => $user->photo,
         ]);
 
-        $user = $request->user();
 
-        Auth::logout();
+        $user->save();
 
-        $user->delete();
+        if (session()->has('employe')) {
+            session(['employe' => $user]);
+        }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        return redirect()->route('profile.edit')->with('success', 'Profil mis à jour avec succès.');
+    }
 
-        return Redirect::to('/');
+    // Mettre à jour le mot de passe
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password'      => 'required',
+            'password'              => 'required|string|min:8|confirmed',
+        ]);
+
+        // Vérifier l'ancien mot de passe
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('profile.edit')->with('success', 'Mot de passe mis à jour avec succès.');
     }
 }
